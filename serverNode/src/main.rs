@@ -7,14 +7,6 @@ use std::time::Duration;
 
 mod parser;
 
-const TEST_FILE_SELECTED: &str = "tests/basic_0.test";
-
-const NUM_DATA_ENTRIES: u32 = 1000000;
-
-const NUM_OPERATIONS: u32 = 1000000000;
-
-// const MAX_VAL: FakeDatum = 200;
-
 const N_THREADS: usize = 32;
 enum Command {
     GET,
@@ -74,9 +66,9 @@ fn handle_client(mut stream: TcpStream, running: Arc<AtomicBool>) {
 // Test TCP connection wit h
 // nc 127.0.0.1 8080
 fn main() -> io::Result<()> {
-    let listener = TcpListener::bind("127.0.0.1:8080")?;
+    let listener = TcpListener::bind("0.0.0.0:8080")?;
     listener.set_nonblocking(true)?;
-    println!("Server listening on 127.0.0.1:8080");
+    println!("Server listening on 0.0.0.0:8080");
 
     let running = Arc::new(AtomicBool::new(true));
 

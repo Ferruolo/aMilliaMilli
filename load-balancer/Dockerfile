@@ -1,14 +1,28 @@
-# Use the official Ubuntu base image
+# Use Ubuntu as the base image
 FROM ubuntu:latest
 
-# Update package lists and install Python
-RUN apt-get update && apt-get install -y python3
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the Python script into the container
-COPY load-balancer.py .
+# Copy the local Rust project files to the container
+COPY . .
 
-# Run the Python script when the container launches
-CMD ["python3", "load-balancer.py"]
+# Build the Rust project
+RUN cargo build --release
+
+# Expose the port your application will run on (change this if needed)
+EXPOSE 8080
+
+# Run the Rust application
+CMD ["./target/release/serverNode"]
+

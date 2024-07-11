@@ -8,7 +8,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a84022e3-820c-454a-90b2-b443bb160645" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../load-balancer/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../load-balancer/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../load-balancer/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../load-balancer/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../load-balancer/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../load-balancer/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../load-balancer/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../load-balancer/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../load-balancer/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../load-balancer/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -24,7 +31,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="ksjuu4mx" />
@@ -141,6 +148,7 @@
       <workItem from="1720470221070" duration="13797000" />
       <workItem from="1720553536300" duration="9677000" />
       <workItem from="1720649790103" duration="85000" />
+      <workItem from="1720715762027" duration="4183000" />
     </task>
     <servers />
   </component>

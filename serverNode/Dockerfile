@@ -25,3 +25,4 @@ EXPOSE 8080
 
 # Run the Rust application
 CMD ["./target/release/serverNode"]
+
