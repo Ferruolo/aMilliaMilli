@@ -6,8 +6,8 @@ use std::{io, thread};
 use std::time::Duration;
 
 mod parser;
-
 const N_THREADS: usize = 32;
+
 enum Command {
     GET,
     SET,
@@ -73,7 +73,6 @@ fn main() -> io::Result<()> {
     let running = Arc::new(AtomicBool::new(true));
 
     let mut handles = vec![];
-
 
     while running.load(Ordering::Relaxed) {
         match listener.accept() {
