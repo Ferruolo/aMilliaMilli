@@ -9,9 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8b0b80fc-d0e3-4bca-ac8c-2189ad4e9257" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../serverNode/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../serverNode/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../serverNode/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../serverNode/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../worker-cluster.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../worker-cluster.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +37,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.rust.reset.selective.auto.import": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/andrewf/aMilli/load-balancer",
+    "last_opened_file_path": "/Users/andrewferruolo/aMilliaMilli/load-balancer",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -86,6 +85,7 @@
       <workItem from="1720649876283" duration="2366000" />
       <workItem from="1720715443836" duration="317000" />
       <workItem from="1720715769018" duration="6907000" />
+      <workItem from="1721065662559" duration="2335000" />
     </task>
     <servers />
   </component>

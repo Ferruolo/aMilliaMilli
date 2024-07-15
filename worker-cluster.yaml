@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: custom-loadbalancer
+  name: basicloadbalancer
 spec:
   replicas: 1
   selector:
@@ -23,14 +23,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: custom-lb-service
+  name: basicloadbalancer-deployment
 spec:
   type: NodePort  # or LoadBalancer, depending on your setup
   ports:
   - port: 80
     targetPort: 80
   selector:
-    app: custom-lb
+    app: basicloadbalancer
 
 ---
 apiVersion: apps/v1
@@ -49,15 +49,15 @@ spec:
     spec:
       containers:
       - name: worker
-        image: your-worker-image:tag
+        image: andrewferruolo/server-node-container:latest
         ports:
         - containerPort: 8080
 
 ---
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: worker-hpa
+  name: worker-deployment
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -65,8 +65,4 @@ spec:
     name: worker-deployment
   minReplicas: 3
   maxReplicas: 10
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      targetAverageUtilization: 50
+
