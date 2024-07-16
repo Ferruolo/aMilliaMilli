@@ -1,104 +1,87 @@
-use std::io::{ErrorKind, Read, Write};
-use std::net::{Shutdown, TcpListener, TcpStream};
-use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::{io, thread};
-use std::time::Duration;
 
-// mod parser;
-const N_THREADS: usize = 32;
-
-enum Command {
-    GET,
-    SET,
-    KILL,
-    Unknown,
+use k8s_openapi::api::core::v1::Pod;
+use kube::{
+    api::{Api, ListParams},
+    Client,
+};
+use std::sync::{atomic::{AtomicUsize, Ordering}, Arc};
+use tokio::{
+    io,
+    net::{TcpListener, TcpStream},
+};
+struct LoadBalancer {
+    pods: Vec<String>,
+    current: AtomicUsize,
 }
 
-fn handle_client(mut stream: TcpStream, running: Arc<AtomicBool>) {
-    let mut buffer = [0; 1024];
+impl LoadBalancer {
+    fn new(pods: Vec<String>) -> Self {
+        LoadBalancer {
+            pods,
+            current: AtomicUsize::new(0),
+        }
+    }
 
-    while running.load(Ordering::Relaxed) {
-        match stream.read(&mut buffer) {
-            Ok(size) => {
-                if size == 0 {
-                    return;
-                }
+    fn next_pod(&self) -> Option<&String> {
+        let current = self.current.fetch_add(1, Ordering::SeqCst) % self.pods.len();
+        self.pods.get(current)
+    }
+}
 
-                let received = String::from_utf8_lossy(&buffer[..size]);
-                let command = match received.trim().to_uppercase().as_str() {
-                    "GET" => Command::GET,
-                    "SET" => Command::SET,
-                    "KILL" => Command::KILL,
-                    _ => Command::Unknown,
-                };
+async fn handle_connection(mut client: TcpStream, lb: Arc<LoadBalancer>) {
+    if let Some(pod_ip) = lb.next_pod() {
+        println!("Routing connection to pod: {}", pod_ip);
+        match TcpStream::connect(format!("{}:8080", pod_ip)).await {
+            Ok(mut server) => {
+                let (mut client_read, mut client_write) = client.split();
+                let (mut server_read, mut server_write) = server.split();
 
-                match command {
-                    Command::GET => {
-                        println!("Received GET command");
-                        let _ = stream.write_all(b"Received GET command\n");
-                    }
-                    Command::SET => {
-                        println!("Received SET command");
-                        let _ = stream.write_all(b"Received SET command\n");
-                    }
-                    Command::KILL => {
-                        println!("Received KILL command, initiating shutdown");
-                        let _ = stream.write_all(b"Server shutting down\n");
-                        running.store(false, Ordering::Relaxed);
-                    }
-                    Command::Unknown => {
-                        println!("Received unknown command");
-                        let _ = stream.write_all(b"Unknown command\n");
-                    }
+                let client_to_server = io::copy(&mut client_read, &mut server_write);
+                let server_to_client = io::copy(&mut server_read, &mut client_write);
+
+                tokio::select! {
+                    _ = client_to_server => {},
+                    _ = server_to_client => {},
                 }
             }
             Err(e) => {
-                eprintln!("Error reading from connection: {}", e);
-                return;
+                eprintln!("Failed to connect to pod {}: {}", pod_ip, e);
             }
         }
+    } else {
+        eprintln!("No pods available");
     }
-    stream.shutdown(Shutdown::Both).unwrap();
-    println!("Process Killed");
 }
 
-// Test TCP connection wit h
-// nc 127.0.0.1 8080
-fn main() -> io::Result<()> {
-    let listener = TcpListener::bind("0.0.0.0:8080")?;
-    listener.set_nonblocking(true)?;
-    println!("Server listening on 0.0.0.0:8080");
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Initialize the Kubernetes client
+    let client = Client::try_default().await?;
 
-    let running = Arc::new(AtomicBool::new(true));
+    // Get the list of pods in the default namespace
+    let pods: Api<Pod> = Api::default_namespaced(client);
+    let lp = ListParams::default();
+    let pod_list = pods.list(&lp).await?;
 
-    let mut handles = vec![];
+    // Extract pod IP addresses
+    let pod_ips: Vec<String> = pod_list
+        .iter()
+        .filter_map(|pod| pod.status.as_ref()?.pod_ip.clone())
+        .collect();
 
-    while running.load(Ordering::Relaxed) {
-        match listener.accept() {
-            Ok((stream, _)) => {
-                let running_clone = Arc::clone(&running);
-                handles.push(thread::spawn(move || {
-                    handle_client(stream, running_clone);
-                    println!("Ending thread")
-                }));
-            }
-            Err(ref e) if e.kind() == ErrorKind::WouldBlock => {
-                // Wait a bit before trying again
-                thread::sleep(Duration::from_millis(100));
-                continue;
-            }
-            Err(e) => eprintln!("Error accepting connection: {}", e),
-        }
-    }
+    // Create the load balancer
+    let lb = Arc::new(LoadBalancer::new(pod_ips));
 
-    println!("Shutting down. Waiting for all connections to close...");
-    for handle in handles {
-        println!("Killing a handle");
-        let _ = handle.join().unwrap();
-        println!("He Dead. Amen");
+    // Start the TCP listener
+    let listener = TcpListener::bind("0.0.0.0:8080").await?;
+    println!("Load balancer listening on port 8080");
+
+    while let Ok((client, _)) = listener.accept().await {
+        let lb_clone = lb.clone();
+        tokio::spawn(async move {
+            handle_connection(client, lb_clone).await;
+        });
     }
 
     Ok(())
 }
-

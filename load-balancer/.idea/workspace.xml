@@ -9,10 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8b0b80fc-d0e3-4bca-ac8c-2189ad4e9257" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../serverNode/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../serverNode/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../serverNode/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/../serverNode/src/main.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../worker-cluster.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../worker-cluster.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -90,7 +88,7 @@
       <workItem from="1720715769018" duration="6907000" />
       <workItem from="1721065662559" duration="2335000" />
       <workItem from="1721082350685" duration="7497000" />
-      <workItem from="1721139915439" duration="1828000" />
+      <workItem from="1721139915439" duration="7507000" />
     </task>
     <servers />
   </component>
