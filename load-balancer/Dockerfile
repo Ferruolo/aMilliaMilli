@@ -26,8 +26,8 @@ COPY . .
 RUN cargo build --release
 
 # Expose the port your application will run on (change this if needed)
-EXPOSE 8080
+EXPOSE 30000
 
 # Run the Rust application
-CMD ["./target/release/load-balancer"]
+CMD ["./target/release/load-balancer", ">", "out.txt"]
 

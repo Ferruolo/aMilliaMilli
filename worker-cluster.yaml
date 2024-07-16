@@ -1,68 +1,87 @@
+# Use MetalLB for IP Addresses
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: address-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 172.21.0.2-172.21.0.16
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: address-pool
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - address-pool
+#Deploy backend first
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: basicloadbalancer
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: custom-lb
-  template:
-    metadata:
-      labels:
-        app: custom-lb
-    spec:
-      containers:
-      - name: custom-lb
-        image: andrewferruolo/basicloadbalancer:latest
-        ports:
-        - containerPort: 80
-        
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: basicloadbalancer-deployment
-spec:
-  type: NodePort  # or LoadBalancer, depending on your setup
-  ports:
-  - port: 80
-    targetPort: 80
-  selector:
-    app: basicloadbalancer
-
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: worker-deployment
+  name: milli-backend
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: worker
+      app: milli
+      tier: backend
+      track: stable
   template:
     metadata:
       labels:
-        app: worker
+        app: milli
+        tier: backend
+        track: stable
     spec:
       containers:
       - name: worker
         image: andrewferruolo/server-node-container:latest
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 8080
-
 ---
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: worker-deployment
+  name: milli-frontend
 spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: worker-deployment
-  minReplicas: 3
-  maxReplicas: 10
-
+  replicas: 1
+  selector:
+    matchLabels:
+      app: milli
+      tier: frontend
+      track: stable
+  template:
+    metadata:
+      labels:
+        app: milli
+        tier: frontend
+        track: stable
+    spec:
+      containers:
+      - name: milli-frontend-lb
+        image: andrewferruolo/basicloadbalancer:latest
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: milli-frontend
+spec:
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30000
+  externalTrafficPolicy: Local
+  selector:
+    app: milli
+    tier: frontend
+    track: stable
