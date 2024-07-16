@@ -80,7 +80,6 @@ spec:
       port: 8080
       targetPort: 8080
       nodePort: 30000
-  externalTrafficPolicy: Local
   selector:
     app: milli
     tier: frontend
